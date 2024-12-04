@@ -13,7 +13,8 @@ from datetime import datetime
 from logger import Logger
 logger = Logger()
 
-default_models = ["yolov10n", "yolov10s", "yolov10m", "yolov10l", "yolov10x"]
+default_models = ["yolov10n", "yolov10s", "yolov10m", "yolov10l", "yolov10x",
+                  "yolo11n", "yolo11s", "yolo11m", "yolo11l", "yolo11x",]
 debug_mode = True
 process = None 
 stop_event = threading.Event() 
