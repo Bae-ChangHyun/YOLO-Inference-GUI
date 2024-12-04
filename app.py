@@ -31,19 +31,21 @@ def save_log(file_name):
     return log_path
 
 def update_params(value, label):
-    if(label != ""):
+    if(label != "" and value != None):
         if(type(value) == bool): params_state[label] = value
         else: params_state[label] = f"{value}"
     final_params = ' '.join(f"{k}={v}" for k, v in params_state.items() if v) # yolo command format(https://docs.ultralytics.com/usage/cli/)
     return final_params
 
 def get_file_content(file):
-    try:
-        with open(file, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-        return ''.join(lines)
-    except Exception as e:
-        return f"Can't read File: {str(e)}"
+    def inner():
+        try:
+            with open(file, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+            return ''.join(lines)
+        except Exception as e:
+            return f"Can't read File: {str(e)}"
+    return inner
 
 def get_name(file):
     try: return file.name
@@ -133,7 +135,7 @@ def create_interface():
         with gr.Tab("Inference"):
             
             gr.Markdown("## Select Model")
-            model_choice = gr.Radio(["Default", "Custom"], label="Select model")
+            model_choice = gr.Radio(["Default", "Custom"], label="Select model", show_label=False)
             default_model = gr.Dropdown(default_models, label="", visible=False, value=None)
             import_method = gr.Radio(["Path", "File"], label="모델 불러오기 방법", visible=False)
             custom_model_path = gr.Textbox(label="Model path", visible=False, value=None)
@@ -212,16 +214,12 @@ def create_interface():
                 )
            
             with gr.Row():
-                with gr.Column():
-                    run_button = gr.Button("Run", size='sm', scale=1)
-                    stop_button = gr.Button("Stop", size='sm', scale=1)
-                    refresh_button = gr.Button("Log refresh", size='sm', scale=1)
-                with gr.Column():
-                    output = gr.Textbox(label="Result", lines = 3, scale=3)
+                run_button = gr.Button("Run", scale = 1)
+                stop_button = gr.Button("Stop", scale = 1 )
+                output = gr.Textbox(label="Result",show_label= False, scale = 3)
                     
-            log = gr.Code(max_lines=20, scale=2, language="yaml")
+            log = gr.Code(max_lines=20, scale=2, language="yaml", value = get_file_content("inference.log"), every=2)
             
-            refresh_button.click(get_file_content, inputs=[gr.Textbox("inference.log",visible=False)], outputs=log)
             run_button.click(inference, inputs=[final_params,save_name], outputs=output, show_progress=True)
             stop_button.click(stop, inputs=save_name, outputs=output)
     
