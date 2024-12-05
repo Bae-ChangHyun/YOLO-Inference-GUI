@@ -11,7 +11,7 @@ from functools import partial
 from datetime import datetime
 
 from logger import Logger
-logger = Logger()
+logger =Logger()
 
 default_models = ["yolov10n", "yolov10s", "yolov10m", "yolov10l", "yolov10x",
                   "yolo11n", "yolo11s", "yolo11m", "yolo11l", "yolo11x",]
@@ -36,7 +36,7 @@ def update_params(value, label):
     if(label != "" and value != None):
         if(type(value) == bool): params_state[label] = value
         else: params_state[label] = f"{value}"
-    final_params = ' '.join(f"{k}={v}" for k, v in params_state.items() if v) # yolo command format(https://docs.ultralytics.com/usage/cli/)
+    final_params = ' '.join(f"{k}='{v}'" for k, v in params_state.items() if v) # yolo command format(https://docs.ultralytics.com/usage/cli/)
     return final_params
 
 def get_file_content(file):
@@ -55,7 +55,6 @@ def get_name(file):
 
 def inference(params, save_name):
     global process, stop_event
-    
     # Check if the save_name directory already exists
     save_path = f'runs/detect/{save_name}'
     if os.path.exists(save_path):
@@ -146,9 +145,11 @@ def create_interface():
             model_choice.change(
                 lambda choice: (
                     gr.update(visible=choice == "Default"), #! Must same with 'model_choice' gr.Radio(value[0])
+                    gr.update(visible=choice == "Custom"),   #! Must same with 'model_choice' gr.Radio(value[1])
+                    gr.update(visible=choice == "Custom"),   #! Must same with 'model_choice' gr.Radio(value[1])
                     gr.update(visible=choice == "Custom")   #! Must same with 'model_choice' gr.Radio(value[1])
                 ),
-                inputs=model_choice, outputs=[default_model, import_method]
+                inputs=model_choice, outputs=[default_model, import_method,custom_model_path, custom_model_file]
             )
             
             import_method.change(
@@ -183,7 +184,8 @@ def create_interface():
             lambda choice: (
                 gr.update(visible=choice == 'True'),
                 gr.update(visible=choice == 'True'),
-                get_file_content("default.yaml") if choice == 'True' else ""),
+                gr.update(visible=choice == 'True'),
+            ),
             inputs=add_params_radio,
             outputs=[params_arg, default_params_code, default_params_code])
             
