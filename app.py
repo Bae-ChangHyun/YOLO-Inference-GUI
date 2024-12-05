@@ -176,7 +176,7 @@ def create_interface():
                     show_conf = gr.Checkbox(label="show_conf", value=True, info="Show confidence score") 
                     show_conf = gr.Checkbox(label="show_boxes", value=True, info="Show bounding box") 
             add_params_radio = gr.Radio(['True', 'False'], value= 'False', label="Additional arguments", visible=True)
-            default_params_code = gr.Code(lines=5, scale=2, language="yaml", max_lines=20, visible=False) # Show default.yaml,  https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/default.yaml
+            default_params_code = gr.Code(scale=2, language="yaml",lines=5, max_lines=20, visible=False, value = get_file_content("default.yaml")) # Show default.yaml,  https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/default.yaml
             params_arg = gr.Textbox(label="", lines =2, visible= False, placeholder="Enter additional arguments, refer to the default.yaml \n Arguments must be passed as arg=val pairs, split by an equals = sign and delimited by spaces between pairs. Do not use -- argument prefixes or commas , between arguments.")
             
             add_params_radio.change(
