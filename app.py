@@ -25,9 +25,11 @@ def save_log(file_name):
     log_path = f'runs/detect/{file_name}/inference.log' # runs/detect is yolo's default save path
     shutil.copy("inference.log", log_path)
     
-    if os.path.exists("inference.log"):
-        os.remove("inference.log")
-    
+    try:
+        if os.path.exists("inference.log"):
+            with open("inference.log", "w") as file: pass  
+    except:
+        pass    
     return log_path
 
 def update_params(value, label):
